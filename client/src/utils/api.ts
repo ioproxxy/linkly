@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api', // Hardcoded local for MVP
+    baseURL: '/api', // Use relative path to leverage Vite proxy
 });
 
 api.interceptors.request.use((config) => {
