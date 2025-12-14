@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  campaigns Campaign[]
+}
+
+model Campaign {
+  id          String   @id @default(uuid())
+  name        String
+  status      String   @default("DRAFT") // DRAFT, ACTIVE, PAUSED, COMPLETED
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  leads       Lead[]
+  emails      EmailMessage[]
+}
+
+model Lead {
+  id          String   @id @default(uuid())
+  email       String
+  companyName String
+  website     String
+  name        String?
+  status      String   @default("NEW") // NEW, CONTACTED, REPLIED, INTERESTED, NOT_INTERESTED, MEETING_BOOKED
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  emails      EmailMessage[]
+  replies     Reply[]
+  meetings    Meeting[]
+
+  @@unique([email, campaignId])
+}
+
+model EmailMessage {
+  id          String   @id @default(uuid())
+  subject     String
+  body        String
+  sentAt      DateTime @default(now())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id])
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  step        Int      @default(1) // 1 = initial, 2 = follow up 1, etc.
+}
+
+model Reply {
+  id          String   @id @default(uuid())
+  subject     String
+  body        String
+  receivedAt  DateTime @default(now())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id])
+  classification String? // INTERESTED, NOT_INTERESTED, QUESTION
+}
+
+model Meeting {
+  id          String   @id @default(uuid())
+  startTime   DateTime
+  endTime     DateTime
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id])
+  status      String   @default("SCHEDULED")
+}
