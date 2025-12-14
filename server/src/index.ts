@@ -18,6 +18,12 @@ import path from 'path';
 app.use(cors());
 app.use(express.json());
 
+// Request Logger
+app.use((req, res, next) => {
+    console.log(`[REQUEST] ${req.method} ${req.path}`);
+    next();
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/dashboard', dashboardRoutes);
