@@ -25,47 +25,58 @@ export default function LoginPage() {
     };
 
     return (
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f5f9' }}>
-            <div className="card" style={{ width: '100%', maxWidth: '400px' }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1.5rem', textAlign: 'center' }}>
-                    {isRegister ? 'Create Account' : 'Welcome Back'}
-                </h2>
+        <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
+            <div className="card w-full max-w-md space-y-8 bg-white p-8 rounded-2xl shadow-xl">
+                <div className="text-center">
+                    <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        Linkly
+                    </h1>
+                    <h2 className="mt-2 text-xl font-semibold text-slate-900">
+                        {isRegister ? 'Create your account' : 'Welcome back'}
+                    </h2>
+                    <p className="mt-2 text-sm text-slate-600">
+                        AI-Powered Outbound Sales Platform
+                    </p>
+                </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label className="label">Email</label>
-                        <input
-                            type="email"
-                            className="input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="label">Email address</label>
+                            <input
+                                type="email"
+                                className="input"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                placeholder="you@company.com"
+                            />
+                        </div>
+                        <div>
+                            <label className="label">Password</label>
+                            <input
+                                type="password"
+                                className="input"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                placeholder="••••••••"
+                            />
+                        </div>
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label className="label">Password</label>
-                        <input
-                            type="password"
-                            className="input"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-                        {isRegister ? 'Sign Up' : 'Log In'}
+                    <button type="submit" className="btn btn-primary w-full py-3 text-base shadow-lg shadow-blue-500/30">
+                        {isRegister ? 'Sign Up' : 'Sign In'}
                     </button>
                 </form>
 
-                <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                <p className="text-center text-sm text-slate-600">
                     {isRegister ? 'Already have an account?' : "Don't have an account?"}
                     <button
                         onClick={() => setIsRegister(!isRegister)}
-                        style={{ border: 'none', background: 'none', color: 'var(--primary)', fontWeight: 500, marginLeft: '0.25rem' }}
+                        className="ml-1 font-medium text-primary-600 hover:text-primary-500"
                     >
-                        {isRegister ? 'Log In' : 'Sign Up'}
+                        {isRegister ? 'Sign In' : 'Sign Up'}
                     </button>
                 </p>
             </div>
