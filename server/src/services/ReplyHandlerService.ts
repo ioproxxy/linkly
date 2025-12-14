@@ -41,10 +41,18 @@ export class ReplyHandlerService {
         const classification = await this.classifyReply(replyBody);
         console.log(`Classification: ${classification}`);
 
+        // Record classification in Reply model (if schema updated, which it is)
+        await prisma.reply.update({
+            where: { id: (await prisma.reply.findFirst({ where: { leadId: lead.id }, orderBy: { createdAt: 'desc' } }))?.id },
+            data: { classification }
+        });
+
         // Update lead status
         let newStatus = 'REPLIED';
         if (classification === 'INTERESTED') newStatus = 'INTERESTED';
         if (classification === 'NOT_INTERESTED') newStatus = 'NOT_INTERESTED';
+        if (classification === 'ESCALATE') newStatus = 'ESCALATE'; // New status
+        // We might need to add ESCALATE to Lead status enum or string if strict, but it is String in schema so fine.
 
         await prisma.lead.update({
             where: { id: lead.id },
@@ -55,14 +63,19 @@ export class ReplyHandlerService {
         if (classification === 'INTERESTED' || classification === 'QUESTION') {
             const response = await this.generateResponse(replyBody, lead, classification);
             await this.outreachService.sendEmail(lead, `Re: ${lead.companyName}`, response);
+        } else if (classification === 'ESCALATE') {
+            // Notify admin (console for now, notification system later)
+            console.warn(`⚠️ REPLY ESCALATED for Lead ${lead.email}: ${replyBody.substring(0, 50)}...`);
         }
     }
 
     private async classifyReply(body: string): Promise<string> {
-        if (!this.model) return 'INTERESTED'; // Default mock
+        if (!this.model) return 'INTERESTED';
 
         try {
-            const prompt = `Classify this sales email reply into one of these categories: INTERESTED, NOT_INTERESTED, QUESTION. Reply ONLY with the category name.\n\nEmail Body:\n${body}`;
+            const prompt = `Classify this sales email reply into one of these categories: INTERESTED, NOT_INTERESTED, QUESTION, ESCALATE. 
+          Use ESCALATE if the reply is angry, complex, asks for a human specifically, or mentions legal issues.
+          Reply ONLY with the category name.\n\nEmail Body:\n${body}`;
             const result = await this.model.generateContent(prompt);
             const response = await result.response;
             return response.text().trim().toUpperCase();

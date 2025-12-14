@@ -54,10 +54,11 @@ model EmailMessage {
   subject     String
   body        String
   sentAt      DateTime @default(now())
+  status      String   @default("SENT") // SENT, FAILED
   leadId      String
   lead        Lead     @relation(fields: [leadId], references: [id])
-  campaignId  String
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id])
   step        Int      @default(1) // 1 = initial, 2 = follow up 1, etc.
 }
 
@@ -66,6 +67,7 @@ model Reply {
   subject     String
   body        String
   receivedAt  DateTime @default(now())
+  createdAt   DateTime @default(now()) // Add this for ordering
   leadId      String
   lead        Lead     @relation(fields: [leadId], references: [id])
   classification String? // INTERESTED, NOT_INTERESTED, QUESTION
