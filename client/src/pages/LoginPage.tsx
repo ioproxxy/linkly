@@ -26,8 +26,13 @@ export default function LoginPage() {
 
             navigate('/');
         } catch (error: any) {
-            const errorMessage = error.response?.data?.error || error.message || 'Authentication failed';
             console.error('Login Error:', error);
+            let errorMessage = error.response?.data?.error || error.message || 'Authentication failed';
+
+            if (typeof errorMessage === 'object') {
+                errorMessage = JSON.stringify(errorMessage);
+            }
+
             alert(`Error: ${errorMessage}`);
         }
     };
