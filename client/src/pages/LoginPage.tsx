@@ -25,9 +25,10 @@ export default function LoginPage() {
             localStorage.setItem('user', JSON.stringify(data.user));
 
             navigate('/');
-        } catch (error) {
-            alert('Authentication failed');
-            console.error(error);
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.error || error.message || 'Authentication failed';
+            console.error('Login Error:', error);
+            alert(`Error: ${errorMessage}`);
         }
     };
 
