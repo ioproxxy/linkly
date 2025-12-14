@@ -1,4 +1,3 @@
-import React from 'react';
 
 export default function DashboardPage() {
     // const user = JSON.parse(localStorage.getItem('user') || '{}');
