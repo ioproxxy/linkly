@@ -1,10 +1,17 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 
 export default function Layout() {
     const location = useLocation();
+    const navigate = useNavigate();
 
     const isActive = (path: string) => location.pathname === path;
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/login');
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-slate-50">
@@ -34,8 +41,16 @@ export default function Layout() {
                         </Link>
                     </div>
                     <div className="flex items-center gap-4">
+                        <button
+                            onClick={handleLogout}
+                            className="text-sm font-medium text-slate-500 hover:text-red-500 transition-colors"
+                        >
+                            Logout
+                        </button>
                         {/* Abstract Avatar */}
-                        <div className="w-8 h-8 rounded-full bg-slate-200 ring-2 ring-white shadow-sm"></div>
+                        <div className="w-8 h-8 rounded-full bg-slate-200 ring-2 ring-white shadow-sm flex items-center justify-center text-xs font-bold text-slate-500">
+                            U
+                        </div>
                     </div>
                 </div>
             </nav>
